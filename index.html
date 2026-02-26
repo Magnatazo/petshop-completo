@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Meu Pet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ── TOAST ── -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- ── MODAL DE CONFIRMAÇÃO DE CANCELAMENTO ── -->
+  <div class="overlay" id="overlay">
+    <div class="confirm-box">
+      <div class="ico">🗑️</div>
+      <p id="conf-txt">Cancelar este agendamento?</p>
+      <div class="confirm-actions">
+        <button class="btn-back" onclick="fecharModal()">Voltar</button>
+        <button class="btn-yes" id="conf-yes">✕ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <img src="img/logo.png" class="header-logo" alt="Logo">
+
+     <div class="header-title">Meu
+     Pet</div>
+  </header>
+
+  <!-- ── BARRA DE ESTATÍSTICAS ── -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-icon">🧑‍💼</div>
+      <div class="stat-label">Clientes<br>Cadastrados</div>
+      <div class="stat-value" id="s-cli">0</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-icon">🐶</div>
+      <div class="stat-label">Pets<br>Cadastrados</div>
+      <div class="stat-value" id="s-pet">0</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-icon">📅</div>
+      <div class="stat-label">Próximos<br>Agendamentos</div>
+      <div class="stat-value" id="s-agend">0</div>
+    </div>
+    <div class="stat-div"></div>
+    <div class="stat-item">
+      <div class="stat-icon">❌</div>
+      <div class="stat-label">Agendamentos<br>Cancelados</div>
+      <div class="stat-value" id="s-canc">0</div>
+    </div>
+  </div>
+
+  <!-- ── NAVEGAÇÃO DAS ABAS ── -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="goTab('clientes', this)">
+      <span class="tab-icon">🧑‍💼</span>Cadastro de Clientes
+    </button>
+    <button class="tab-btn" onclick="goTab('pets', this)">
+      <span class="tab-icon">🐶</span>Cadastro de Pets
+    </button>
+    <button class="tab-btn" onclick="goTab('agendamento', this)">
+      <span class="tab-icon">📅</span>Agendamento
+    </button>
+    <button class="tab-btn" onclick="goTab('cancelamento', this)">
+      <span class="tab-icon">❌</span>Cancelamentos
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- ABA: CADASTRO DE CLIENTES                         -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-page active" id="tab-clientes">
+    <div style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
+
+      <!-- Formulário -->
+      <div class="card">
+        <div class="card-title">Cadastro do cliente</div>
+
+        <div class="field">
+          <span class="field-label">Nome</span>
+          <input type="text" id="c-nome" placeholder="Nome completo"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Endereço</span>
+          <input type="text" id="c-end" placeholder="Rua, número, bairro"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Email</span>
+          <input type="email" id="c-email" placeholder="email@exemplo.com"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Telefone</span>
+          <input type="text" id="c-tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)"/>
+        </div>
+
+        <button class="btn-main" onclick="salvarCliente()">Cadastrar</button>
+      </div>
+
+      <!-- Tabela -->
+      <div style="flex:1; min-width:280px;">
+        <div class="page-top">
+          <div>
+            <h2>Clientes cadastrados</h2>
+            <p id="cli-sub">0 clientes</p>
+          </div>
+          <input class="search-input" type="text" id="s-cli-q"
+            placeholder="Buscar cliente..." oninput="renderTabClientes()"/>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tb-cli">
+              <tr><td class="empty-td" colspan="4">Nenhum cliente cadastrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- ABA: CADASTRO DE PETS                             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-page" id="tab-pets">
+    <div style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
+
+      <!-- Formulário -->
+      <div class="card">
+        <div class="card-title">Cadastro do Pet</div>
+
+        <div class="field">
+          <span class="field-label">Nome do Pet</span>
+          <input type="text" id="p-nome" placeholder="Nome do pet"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Espécie</span>
+          <select id="p-esp">
+            <option value="">Selecione</option>
+            <option>Cachorro</option>
+            <option>Gato</option>
+            <option>Coelho</option>
+            <option>Ave</option>
+            <option>Peixe</option>
+            <option>Réptil</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">Tutor</span>
+          <select id="p-tutor">
+            <option value="">Selecione o tutor</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">Raça</span>
+          <input type="text" id="p-raca" placeholder="Ex: Labrador"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Idade</span>
+          <input type="text" id="p-idade" placeholder="Ex: 3 anos"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Sexo</span>
+          <div class="check-row">
+            <label class="check-label">
+              <input type="radio" name="p-sexo" value="Macho"/> Macho
+            </label>
+            <label class="check-label">
+              <input type="radio" name="p-sexo" value="Fêmea"/> Fêmea
+            </label>
+          </div>
+        </div>
+
+        <button class="btn-main" onclick="salvarPet()">Cadastrar</button>
+      </div>
+
+      <!-- Tabela -->
+      <div style="flex:1; min-width:280px;">
+        <div class="page-top">
+          <div>
+            <h2>Pets cadastrados</h2>
+            <p id="pet-sub">0 pets</p>
+          </div>
+          <input class="search-input" type="text" id="s-pet-q"
+            placeholder="Buscar pet..." oninput="renderTabPets()"/>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Espécie / Raça</th>
+                <th>Tutor</th>
+                <th>Sexo</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tb-pet">
+              <tr><td class="empty-td" colspan="5">Nenhum pet cadastrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- ABA: AGENDAMENTO DE SERVIÇOS                      -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-page" id="tab-agendamento">
+    <div style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
+
+      <!-- Formulário -->
+      <div class="card blue">
+        <div class="card-title">Agendamento de Serviços</div>
+
+        <div class="field">
+          <span class="field-label">Cliente</span>
+          <select id="a-cli" onchange="filtrarPets()">
+            <option value="">Selecione o cliente</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">Pet</span>
+          <select id="a-pet">
+            <option value="">Selecione o pet</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">Tipo de Serviço</span>
+          <div class="check-row">
+            <label class="check-label">
+              <input type="checkbox" id="svc-banho"/> Banho
+            </label>
+            <label class="check-label">
+              <input type="checkbox" id="svc-tosa"/> Tosa
+            </label>
+            <label class="check-label">
+              <input type="checkbox" id="svc-consulta"/> Consulta
+            </label>
+            <label class="check-label">
+              <input type="checkbox" id="svc-vacina"/> Vacinação
+            </label>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Data de Serviço</span>
+          <input type="date" id="a-data"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Horário</span>
+          <input type="time" id="a-hora"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Observações</span>
+          <input type="text" id="a-obs" placeholder="Observações extras..."/>
+        </div>
+
+        <button class="btn-main blue-btn" onclick="salvarAgendamento()">Agendar</button>
+      </div>
+
+      <!-- Lista de agendados -->
+      <div style="flex:1; min-width:280px;">
+        <div class="page-top">
+          <div>
+            <h2>Agendados</h2>
+            <p id="agend-sub">0 agendamentos ativos</p>
+          </div>
+        </div>
+        <div style="background:var(--blue); border-radius:28px; padding:20px 22px; box-shadow:0 4px 4px rgba(0,0,0,.2);">
+          <div class="agend-list" id="agend-list">
+            <div class="agend-empty">Nenhum agendamento ativo.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- ABA: CANCELAMENTOS                                 -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="tab-page" id="tab-cancelamento">
+
+    <div class="page-top" style="margin-bottom:16px;">
+      <div>
+        <h2>Cancelamentos</h2>
+        <p id="canc-sub">Gerencie e visualize agendamentos cancelados</p>
+      </div>
+      <input class="search-input" type="text" id="s-canc-q"
+        placeholder="Buscar agendamento..." oninput="renderTabCancelamento()"/>
+    </div>
+
+    <!-- Agendamentos ativos para cancelar -->
+    <h3 style="font-size:18px; margin-bottom:10px; color:#444;">
+      Agendamentos Ativos — clique em ✕ para cancelar
+    </h3>
+    <div class="table-wrap" style="margin-top:0; margin-bottom:28px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Pet</th>
+            <th>Cliente</th>
+            <th>Serviço</th>
+            <th>Data</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="tb-ativos">
+          <tr><td class="empty-td" colspan="5">Nenhum agendamento ativo.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Histórico de cancelados -->
+    <h3 style="font-size:18px; margin-bottom:10px; color:#444;">
+      Histórico de Cancelamentos
+    </h3>
+    <div class="table-wrap" style="margin-top:0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Pet</th>
+            <th>Cliente</th>
+            <th>Serviço</th>
+            <th>Data</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tb-canc">
+          <tr><td class="empty-td" colspan="5">Nenhum cancelamento registrado.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ── JAVASCRIPT ── -->
+  <script src="script.js"></script>
+
+</body>
+</html>
