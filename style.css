@@ -10,7 +10,7 @@
   --purple:      #D3BCF6;
   --green-btn:  #D8F79A;
   --purple-dark: #D3BCF6;
-  --blue:        #D3BCF6;
+  --purple:        #D3BCF6;
   --blue-header: #BAE0F5;
   --green-btn:    #D8F79A;
   --bg:          #D1EAF9;
@@ -141,7 +141,7 @@ header {
   width: 100%;
 }
 
-.card.blue { background: var(--blue); }
+.card.blue { background: var(--purple); }
 
 .card-title {
   font-size: 24px;
@@ -490,3 +490,4 @@ header {
   .header-logo  { font-size: 36px; }
   .card { max-width: 100%; }
 }
+
